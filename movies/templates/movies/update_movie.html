@@ -1,0 +1,74 @@
+{% extends 'movies/dashboard.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <!-- Card for updating a movie -->
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Update Movie</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if messages %}
+                            <div class="alert alert-info">
+                                {% for message in messages %}
+                                    {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="{{ form.title.id_for_label }}">Title</label>
+                                {{ form.title }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.director.id_for_label }}">Director</label>
+                                {{ form.director }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.genre.id_for_label }}">Genre</label>
+                                {{ form.genre }}
+                            </div>
+                            <div class="form-group">
+                                <label for="{{ form.releaseYear.id_for_label }}">Release Year</label>
+                                {{ form.releaseYear }}
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-success w-100">Save Movie</button>
+                            </div>
+                        </form>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript files -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Optional: Add interactivity, for example, form validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(event) {
+                // Example of simple validation
+                let valid = true;
+                document.querySelectorAll('.form-control').forEach(input => {
+                    if (input.value.trim() === '') {
+                        valid = false;
+                        input.classList.add('is-invalid');
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                if (!valid) {
+                    event.preventDefault();
+                    alert('Please fill out all fields.');
+                }
+            });
+        });
+    </script>
+{% endblock %}

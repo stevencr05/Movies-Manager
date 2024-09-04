@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>À propos - Movies Manager</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="font/fontawesome-free-6.6.0-web/css/all.min.css">
+
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /*background-color: #f4f4f4;*/
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .hero {
+            position: relative;
+            text-align: center;
+            background: url('{% static "movies/pexels-tima-miroshnichenko-7991259.jpg" %}') no-repeat center center;
+            background-size: cover;
+            background-attachment: fixed;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* height: calc(100vh - 120px); */ /* Supprimer cette ligne */
+            flex-grow: 1; /* Permet à la section hero de grandir et prendre l'espace disponible */
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            width: 100%;
+            padding: 50px 20px;
+        }
+
+        .cards-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: linear-gradient(45deg, #e09, #d0e);
+            border-radius: 10px;
+            padding: 20px;
+            color: white;
+            width: 250px;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+        .card h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 14px;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .buttons .btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #0099ff, #66ccff);
+            color: white;
+            text-transform: uppercase;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .buttons .btn:hover {
+            background: linear-gradient(45deg, #66ccff, #0099ff);
+        }
+
+        footer {
+            background-color: #333;
+            color: #ccc;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: auto; /* Ajoute ceci */
+            width: 100%; /* Assure que le footer prend toute la largeur */
+            flex-shrink: 0;
+        }
+        
+
+        .copyright {
+            font-size: 14px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <div class="overlay"></div>
+        <div class="hero-content">
+            <h1 class="display-4">Movies Manager</h1>
+            <p class="lead">Check and manage your personal movies list</p>
+            <div class="cards-container">
+                <div class="card">
+                    <h2>Creation</h2>
+                    <p>You can create your list of films that you want to watch.</p>
+                </div>
+                <div class="card">
+                    <h2>Updation</h2>
+                    <p>You can update your list of films by modifying their characteristics.</p>
+                </div>
+                <div class="card">
+                    <h2>Deletion</h2>
+                    <p>You can delete films from your list that you no longer want to watch.</p>
+                </div>
+                <div class="card">
+                    <h2>Movies list</h2>
+                    <p>You can consult your list of films at any time.</p>
+                </div>
+            </div>
+            <div class="buttons mt-4">
+                <a href="{% url 'login' %}" class="btn"><i class="fas fa-sign-in-alt"></i> Login</a>
+                <a href="{% url 'signup' %}" class="btn"><i class="fas fa-user-plus"></i> Register</a>
+            </div>
+        </div>
+    </section>
+    <footer>
+        <div class="copyright">
+            &copy; 2024 Movies Manager. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

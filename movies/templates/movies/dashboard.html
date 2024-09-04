@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies Manager</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    {% load static %}
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+    
+        /* Background image and overlay */
+        .bg-image {
+            background-image: url("{% static 'movies/wallpaperflare.com_wallpaper (7).jpg' %}");
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            height: 120vh;
+            width: 100%;
+        }
+
+        .bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Dark overlay for better readability */
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: #007bff; /* Slightly transparent green */
+            padding: 10px;
+        }
+    
+        .navbar-brand {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    
+        .navbar-nav .nav-link {
+            color: white;
+            margin-right: 15px;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+        
+        .navbar-nav .nav-link:hover {
+            color: #d6d8db;
+        }
+    
+        .btn-create-movie {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            text-decoration: none;
+        }
+    
+        .btn-create-movie:hover {
+            background-color: #218838;
+            transform: scale(1.1);
+        }
+    
+        .btn-create-movie i {
+            line-height: 1;
+        }
+    
+        .movie-card {
+            background-color: rgba(255, 255, 255, 0.685); /* Slightly transparent white background for movie cards */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            transition: transform 0.3s ease;
+        }
+    
+        .movie-card:hover {
+            transform: translateY(-10px);
+        }
+    
+        .movie-card img {
+            width: 200px;
+            height: 100%;
+            object-fit: cover;
+        }
+    
+        .movie-card .card-body {
+            padding: 20px;
+            flex: 1;
+        }
+    
+        .movie-card .card-title {
+            color: #14919b;
+            font-size: 24px; /* Increase font size */
+            font-weight: bold; /* Make text bold */
+            margin-bottom: 10px;
+        }
+    
+        .movie-card .card-text {
+            font-size: 16px;
+            color: #555;
+        }
+    
+        .movie-card a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    
+        .movie-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            background-color: #434346;
+            height: 120vh;
+            position: sticky;
+            top: 0;
+            width: 250px;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .sidebar a.active {
+            background-color: #007bff; /* Couleur de fond pour l'élément actif */
+            color: white; /* Couleur du texte pour l'élément actif */
+            border-radius: 5px; /* Arrondir les coins pour l'élément actif */
+        }
+
+        .sidebar a:hover {
+            background-color: #e9ecef;
+            color: #007bff;
+        }
+
+        .sidebar .dropdown-menu {
+            position: absolute;
+            top: 0;
+            right: -100px;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .sidebar .dropdown-menu a {
+            color: #333;
+        }
+
+        .sidebar .dropdown-menu a:hover {
+            background-color: #e9ecef;
+            color: #007bff;
+        }
+
+        .sidebar .nav-link {
+            color: #ffffff;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Background Image and Overlay -->
+    <div class="bg-image">
+        <div class="bg-overlay"></div>
+
+        <!-- Top Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-light">
+            <a class="navbar-brand" href="#">Movies Manager</a>
+            <div class="collapse navbar-collapse">
+                <form method="post" action="{% url 'logout' %}" class="form-inline ml-auto">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <!-- Main content with Sidebar -->
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <div class="col-sm-auto sidebar">
+                    <a href="{% url 'movies_list' %}" class="nav-link {% if request.path == '/movies/movies/' %} active {% endif %}">
+                        <i class="fas fa-film"></i> View Movies
+                    </a>
+                    <a href="{% url 'create_movie' %}" class="nav-link {% if request.path == '/movies/movies/create/' %} active {% endif %}">
+                        <i class="fas fa-plus"></i> Create Movie
+                    </a>
+                    <a href="{% url 'delete_movie' %}" class="nav-link {% if request.path == '/movies/movies/delete/' %} active {% endif %}">
+                        <i class="fas fa-trash"></i> Delete Movie
+                    </a>
+                    <a href="{% url 'profile' %}" class="nav-link {% if request.path == '/movies/profile/' %} active {% endif %}">
+                        <i class="bi-person-circle h2"></i> Profile
+                    </a>
+                </div>
+                
+                <!-- Content area -->
+                <div class="col-sm p-3 min-vh-100">
+                    <!-- Main content -->
+                    {% block content %}
+                    <!-- Page content goes here -->
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Movie Button -->
+        <a href="{% url 'create_movie' %}" class="btn-create-movie">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

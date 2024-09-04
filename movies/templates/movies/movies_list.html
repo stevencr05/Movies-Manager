@@ -1,0 +1,117 @@
+{% extends 'movies/dashboard.html' %}
+
+{% block content %}
+    <h1 class="text-primary">Movies List</h1>
+    
+    <!-- Search and Filter Form -->
+    <form method="GET" action="{% url 'movies_list' %}" class="form-inline mb-4">
+        <!-- Container for form elements to fill the width -->
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Search bar -->
+                <div class="form-group col-md-4 mb-2">
+                    <label for="search" class="mr-2 text-white">Search:</label>
+                    <input type="text" id="search" name="search" class="form-control" value="{{ request.GET.search }}">
+                </div>
+
+                <!-- Genre filter -->
+                <div class="form-group col-md-3 mb-2">
+                    <label for="genre" class="mr-2 text-white">Genre:</label>
+                    <select id="genre" name="genre" class="form-control">
+                        <option value="" {% if not request.GET.genre %}selected{% endif %}>All</option>
+                        {% for genre in genres %}
+                            <option value="{{ genre }}" {% if request.GET.genre == genre %}selected{% endif %}>{{ genre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Year filter -->
+                <div class="form-group col-md-3 mb-2">
+                    <label for="releaseYear" class="mr-2 text-white">Release Year:</label>
+                    <select id="releaseYear" name="releaseYear" class="form-control">
+                        <option value="" {% if not request.GET.releaseYear %}selected{% endif %}>All Years</option>
+                        <option value="this_year" {% if request.GET.releaseYear == 'this_year' %}selected{% endif %}>This Year</option>
+                        <option value="historical" {% if request.GET.releaseYear == 'historical' %}selected{% endif %}>Historical</option>
+                    </select>
+                </div>
+
+                <!-- Search button -->
+                <div class="form-group col-md-2 mb-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Movies Cards -->
+    <div class="container">
+        <div class="row">
+            {% for movie in movies %}
+                <div class="col-md-6 mb-4">
+                    <div class="card movie-card shadow-lg">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ movie.title }}</h5>
+                            <p class="card-text"><strong>Genre:</strong> {{ movie.genre }}</p>
+                            <p class="card-text"><strong>Director:</strong> {{ movie.director }}</p>
+                            <p class="card-text"><strong>Release Year:</strong> {{ movie.releaseYear|date:"Y" }}</p>
+                            <a href="{% url 'update_movie' movie.id %}" class="btn btn-warning">Edit</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12">
+                    <p class="text-white">No movies available.</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block styles %}
+    <style>
+        .movie-card {
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out;
+            color: brown; /* Change text color to brown */
+        }
+        
+        .movie-card:hover {
+            transform: scale(1.02);
+        }
+        
+        .card-body {
+            padding: 20px; /* Add padding to card body */
+        }
+        
+        .card-title {
+            color: brown; /* Change the color of the title text */
+        }
+
+        /* Adjustments for form elements */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+        }
+
+        /* Styling for labels */
+        .text-white {
+            color: white; /* Set label text color to white */
+        }
+
+        /* Styling for 'No movies available' message */
+        .no-movies-message {
+            color: white !important; /* Ensure the text color is white */
+            text-align: center; /* Center align the text */
+            font-size: 1.25rem; /* Optional: adjust font size for better visibility */
+            padding: 1rem; /* Optional: add padding for spacing */
+            background-color: rgba(235, 225, 225, 0.7); /* Optional: dark background for contrast */
+            border-radius: 5px; /* Optional: rounded corners */
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends 'movies/dashboard.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <!-- Card for deleting movies -->
+                <div class="card shadow-lg">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">Delete Movies</h4>
+                    </div>
+                    <div class="card-body">
+                        {% if messages %}
+                            <div class="alert alert-info">
+                                {% for message in messages %}
+                                    {{ message }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Movies Deletion Table -->
+                        <table class="table table-hover table-bordered">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Director</th>
+                                    <th scope="col">Release Year</th>
+                                    <th scope="col">Genre</th>
+                                    <th scope="col">Deletion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for movie in movies %}
+                                    <tr>
+                                        <td>{{ movie.title }}</td>
+                                        <td>{{ movie.director }}</td>
+                                        <td>{{ movie.releaseYear|date:"Y" }}</td>
+                                        <td>{{ movie.genre }}</td>
+                                        <td>
+                                            <form method="POST" action="{% url 'delete_movie' %}" onsubmit="return confirmDeletion();">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="movie_id" value="{{ movie.id }}">
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash-alt"></i> Delete
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">No movies available for deletion.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block styles %}
+    <style>
+        /* Table Styles */
+        .table {
+            background-color: rgba(255, 255, 255, 0.164); /* Fond semi-transparent pour le tableau */
+            border-radius: 10px; /* Coins arrondis pour le tableau */
+            overflow: hidden; /* Pour que les coins arrondis fonctionnent */
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(248, 215, 218, 0.8); /* Fond rouge clair transparent au survol */
+        }
+
+        .thead-dark th {
+            background-color: rgba(220, 53, 69, 0.8); /* Fond rouge sombre transparent pour l'en-tête */
+            color: rgba(255, 255, 255, 0.9); /* Couleur du texte presque blanche pour le contraste */
+        }
+
+        .table td, .table th {
+            background-color: rgba(255, 255, 255, 0.9); /* Fond blanc opaque pour les cellules */
+            color: #333; /* Couleur du texte sombre pour le contraste */
+        }
+
+        /* Delete Button Styles */
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+            transform: scale(1.05);
+        }
+
+        /* Card Header Styles */
+        .card-header.bg-danger {
+            background-color: #dc3545 !important;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .table-responsive {
+                overflow-x: auto;
+            }
+        }
+    </style>
+{% endblock %}
+
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function confirmDeletion() {
+                return confirm('Êtes-vous sûr de vouloir supprimer ce film ?');
+            }
+            
+            // Ajoutez un gestionnaire d'événements pour tous les formulaires de suppression
+            var forms = document.querySelectorAll('form[onsubmit="return confirmDeletion();"]');
+            forms.forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!confirmDeletion()) {
+                        event.preventDefault();  // Empêche la soumission du formulaire si l'utilisateur annule
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
