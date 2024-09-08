@@ -1,117 +1,289 @@
-{% extends 'movies/dashboard.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-    <h1 class="text-primary">Movies List</h1>
-    
-    <!-- Search and Filter Form -->
-    <form method="GET" action="{% url 'movies_list' %}" class="form-inline mb-4">
-        <!-- Container for form elements to fill the width -->
-        <div class="container-fluid">
-            <div class="row">
-                <!-- Search bar -->
-                <div class="form-group col-md-4 mb-2">
-                    <label for="search" class="mr-2 text-white">Search:</label>
-                    <input type="text" id="search" name="search" class="form-control" value="{{ request.GET.search }}">
-                </div>
+    <head>
+        <meta charset="utf-8">
+        <title>Movies Manager</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-                <!-- Genre filter -->
-                <div class="form-group col-md-3 mb-2">
-                    <label for="genre" class="mr-2 text-white">Genre:</label>
-                    <select id="genre" name="genre" class="form-control">
-                        <option value="" {% if not request.GET.genre %}selected{% endif %}>All</option>
-                        {% for genre in genres %}
-                            <option value="{{ genre }}" {% if request.GET.genre == genre %}selected{% endif %}>{{ genre }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+        {% load static %}
 
-                <!-- Year filter -->
-                <div class="form-group col-md-3 mb-2">
-                    <label for="releaseYear" class="mr-2 text-white">Release Year:</label>
-                    <select id="releaseYear" name="releaseYear" class="form-control">
-                        <option value="" {% if not request.GET.releaseYear %}selected{% endif %}>All Years</option>
-                        <option value="this_year" {% if request.GET.releaseYear == 'this_year' %}selected{% endif %}>This Year</option>
-                        <option value="historical" {% if request.GET.releaseYear == 'historical' %}selected{% endif %}>Historical</option>
-                    </select>
-                </div>
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
 
-                <!-- Search button -->
-                <div class="form-group col-md-2 mb-2">
-                    <button type="submit" class="btn btn-primary w-100">Search</button>
-                </div>
+        <!-- Icon Font Stylesheet -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+        <!-- Libraries Stylesheet -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+        <link href="{% static "lib/animate/animate.min.css" %}" rel="stylesheet">
+        <link href="{% static "lib/owlcarousel/assets/owl.carousel.min.css" %}" rel="stylesheet">
+        <link href="{% static "lib/lightbox/css/lightbox.min.css" %}" rel="stylesheet">
+
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="{% static "css/style.css" %}" rel="stylesheet">
+    </head>
+
+    <body>
+
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
             </div>
         </div>
-    </form>
+        <!-- Spinner End -->
 
-    <!-- Movies Cards -->
-    <div class="container">
-        <div class="row">
-            {% for movie in movies %}
-                <div class="col-md-6 mb-4">
-                    <div class="card movie-card shadow-lg">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ movie.title }}</h5>
-                            <p class="card-text"><strong>Genre:</strong> {{ movie.genre }}</p>
-                            <p class="card-text"><strong>Director:</strong> {{ movie.director }}</p>
-                            <p class="card-text"><strong>Release Year:</strong> {{ movie.releaseYear|date:"Y" }}</p>
-                            <a href="{% url 'update_movie' movie.id %}" class="btn btn-warning">Edit</a>
+        <!-- Navbar & Hero Start -->
+        <div class="container-fluid sticky-top px-0">
+            <div class="position-absolute bg-dark" style="left: 0; top: 0; width: 100%; height: 100%;">
+            </div>
+            <div class="container px-0">
+                <nav class="navbar navbar-expand-lg navbar-dark bg-white py-3 px-4">
+                    <a href="index.html" class="navbar-brand p-0">
+                        <h1 class="text-primary m-0"><i class="fas fa-film me-3"></i>Movies Manager</h1>
+                        <!-- <img src="img/logo.png" alt="Logo"> -->
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                        <span class="fa fa-bars"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                        <div class="navbar-nav ms-auto py-0">
+                            <a href="{% url "home" %}" class="nav-item nav-link">Home</a>
+                            <a href="{% url "movies_list" %}" class="nav-item nav-link active">Management</a>
+                            <a href="{% url "create_movie" %}" class="nav-item nav-link">Creation</a>
+                        </div>
+                        <div class="d-flex align-items-center flex-nowrap pt-xl-0">
+                            <a href="{% url "movies_list" %}" class="btn btn-primary rounded-pill text-white py-2 px-4 ms-2 flex-wrap flex-sm-shrink-0">Start Management</a>
+                            <!-- Vérifier si l'utilisateur est authentifié -->
+                            {% if user.is_authenticated %}
+                                <!-- Icône du profil -->
+                                <div class="nav-item dropdown ms-3">
+                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fas fa-user-circle" style="font-size: 40px;"></i> <!-- Icône utilisateur -->
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-end">
+                                        <a href="{% url 'profile' %}" class="dropdown-item">Profile</a>
+                                        <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <!-- Lien vers la page de connexion si l'utilisateur n'est pas authentifié -->
+                                <a href="{% url 'login' %}" class="btn btn-outline-primary rounded-pill py-2 px-4 ms-2">Connexion</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+        <!-- Navbar & Hero End -->
+
+        <!-- Header Start -->
+        <div class="container-fluid bg-breadcrumb">
+            <div class="bg-breadcrumb-single"></div>
+            <div class="container text-center py-5" style="max-width: 900px;">
+                <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Our Services</h4>
+                <ol class="breadcrumb justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
+                    <li class="breadcrumb-item"><a href="{% url "home" %}">Home</a></li>
+                    <li class="breadcrumb-item active text-primary">Management</li>
+                </ol>    
+            </div>
+        </div>
+        <!-- Header End -->
+
+        <!-- List Start -->
+        <div class="container-fluid service py-5">
+            <div class="container py-5">
+                <div class="text-center mx-auto pb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 800px;">
+                    <h4 class="text-primary">Movies List</h4>
+                    <h1 class="display-4"> Here are your movies list</h1>
+                </div>
+                <div class="row g-4 justify-content-center text-center">
+                    <div class="col-md-10">
+                        <!-- Card with shadow -->
+                        <div class="card shadow-lg">
+                            <div class="card-header bg-primary text-white">
+                                <h4>Movies Management</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="panel-heading mb-4">
+                                    <!-- Search and Filter Form -->
+                                    <form method="GET" action="{% url 'movies_list' %}" class="form-inline mb-4">
+                                        <div class="container-fluid">
+                                            <div class="row align-items-center">
+                                                <!-- Search bar -->
+                                                <div class="form-group col-md-4 mb-2">
+                                                    <label for="search" class="mr-2">Search:</label>
+                                                    <input type="text" id="search" name="search" class="form-control" value="{{ request.GET.search }}">
+                                                </div>
+                                    
+                                                <!-- Genre filter -->
+                                                <div class="form-group col-md-3 mb-2">
+                                                    <label for="genre" class="mr-2">Genre:</label>
+                                                    <select id="genre" name="genre" class="form-control">
+                                                        <option value="" {% if not request.GET.genre %}selected{% endif %}>All</option>
+                                                        {% for genre in genres %}
+                                                            <option value="{{ genre }}" {% if request.GET.genre == genre %}selected{% endif %}>{{ genre }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                    
+                                                <!-- Year filter -->
+                                                <div class="form-group col-md-3 mb-2">
+                                                    <label for="releaseYear" class="mr-2">Release Year:</label>
+                                                    <select id="releaseYear" name="releaseYear" class="form-control">
+                                                        <option value="" {% if not request.GET.releaseYear %}selected{% endif %}>All Years</option>
+                                                        <option value="this_year" {% if request.GET.releaseYear == 'this_year' %}selected{% endif %}>This Year</option>
+                                                        <option value="historical" {% if request.GET.releaseYear == 'historical' %}selected{% endif %}>Historical</option>
+                                                    </select>
+                                                </div>
+                                                
+                                                <!-- Search button -->
+                                                <div class="form-group col-md-2 mb-2">
+                                                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>                                                                        
+                                </div>
+        
+                                <!-- Movies Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Title</th>
+                                                <th>Genre</th>
+                                                <th>Director</th>
+                                                <th>Release Date</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for movie in movies %}
+                                                <tr>
+                                                    <td>{{ forloop.counter }}</td>
+                                                    <td>{{ movie.title }}</td>
+                                                    <td>{{ movie.genre }}</td>
+                                                    <td>{{ movie.director }}</td>
+                                                    <td>{{ movie.releaseYear }}</td>
+                                                    <td>
+                                                        <ul class="action-list">
+                                                            <li><a href="{% url 'update_movie' movie.id %}" class="text-primary" data-tip="edit"><i class="fa fa-edit"></i></a></li>
+                                                            <li><a href="#" class="text-danger delete-movie" data-id="{{ movie.id }}" data-tip="delete" type="button"><i class="fa fa-trash"></i></a></li>
+                                                        </ul>
+                                                    </td>                                                                                                        
+                                                </tr>
+                                            {% empty %}
+                                                <tr>
+                                                    <td colspan="6" class="text-center">No movies available.</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            {% empty %}
-                <div class="col-12">
-                    <p class="text-white">No movies available.</p>
-                </div>
-            {% endfor %}
+            </div>
         </div>
-    </div>
-
-{% endblock %}
-
-{% block styles %}
-    <style>
-        .movie-card {
-            border-radius: 10px;
-            background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
-            overflow: hidden;
-            transition: transform 0.3s ease-in-out;
-            color: brown; /* Change text color to brown */
-        }
         
-        .movie-card:hover {
-            transform: scale(1.02);
-        }
+        <!-- List End -->
+
+        <!-- Copyright Start -->
+        <div class="container-fluid copyright py-4">
+            <div class="container">
+                <div class="row g-4 align-items-center">
+                    <div class="col-md-6 text-center text-md-start mb-md-0">
+                        <span class="text-body"><a href="{% url "home" %}" class="border-bottom text-primary"><i class="fas fa-copyright text-light me-2"></i>Movies Manager</a>, All right reserved.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Copyright End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-primary btn-lg-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
+
         
-        .card-body {
-            padding: 20px; /* Add padding to card body */
-        }
-        
-        .card-title {
-            color: brown; /* Change the color of the title text */
-        }
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static "lib/wow/wow.min.js" %}"></script>
+    <script src="{% static "lib/easing/easing.min.js" %}"></script>
+    <script src="{% static "lib/waypoints/waypoints.min.js" %}"></script>
+    <script src="{% static "lib/counterup/counterup.min.js" %}"></script>
+    <script src="{% static "lib/owlcarousel/owl.carousel.min.js" %}"></script>
+    <script src="{% static "lib/lightbox/js/lightbox.min.js" %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        $(document).ready(function () {
+            $(".delete-movie").click(function (e) {
+                e.preventDefault();
+                var movieId = $(this).data('id');
+                
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, cancel!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '{% url "delete_movie" %}', // Assurez-vous que l'URL correspond à la vue Django appropriée
+                            type: 'POST',
+                            data: {
+                                'movie_id': movieId,
+                                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire(
+                                        'Deleted!',
+                                        response.message,
+                                        'success'
+                                    ).then(function () {
+                                        location.reload(); // Recharge la page pour mettre à jour la liste des films
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        response.message,
+                                        'error'
+                                    );
+                                }
+                            },
+                            error: function () {
+                                Swal.fire(
+                                    'Error!',
+                                    'An error occurred while deleting the movie.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 
-        /* Adjustments for form elements */
-        .form-group {
-            margin-bottom: 1rem;
-        }
+    <!-- Template Javascript -->
+    <script src="{% static "js/main.js" %}"></script>
+    </body>
 
-        .form-control {
-            width: 100%;
-        }
-
-        /* Styling for labels */
-        .text-white {
-            color: white; /* Set label text color to white */
-        }
-
-        /* Styling for 'No movies available' message */
-        .no-movies-message {
-            color: white !important; /* Ensure the text color is white */
-            text-align: center; /* Center align the text */
-            font-size: 1.25rem; /* Optional: adjust font size for better visibility */
-            padding: 1rem; /* Optional: add padding for spacing */
-            background-color: rgba(235, 225, 225, 0.7); /* Optional: dark background for contrast */
-            border-radius: 5px; /* Optional: rounded corners */
-        }
-    </style>
-{% endblock %}
+</html>

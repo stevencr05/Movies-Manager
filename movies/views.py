@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth import login, update_session_auth_hash, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.utils.dateparse import parse_date
+from django.views.decorators.http import require_POST
 from django.utils import timezone
 from .models import Movie
 from .forms import MovieForm, UserProfileForm, ChangePasswordForm
@@ -15,7 +16,10 @@ from datetime import datetime
 
 # Create your views here.
 def index(request):
-    return render(request, 'movies/index.html')
+    return render(request, 'registration/index.html')
+
+def home(request):
+    return render(request, 'movies/dashboard.html')
 
 
 def signup(request):
@@ -28,6 +32,10 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+def logout_view(request):
+    logout(request)
+    return redirect('index')
 
 
 
@@ -98,31 +106,15 @@ class MovieUpdateView(LoginRequiredMixin, UpdateView):
     
     
 # Vue pour la suppression des films
-class MovieDeleteListView(LoginRequiredMixin, ListView):
-    model = Movie
-    template_name = 'movies/delete_movie.html'
-    context_object_name = 'movies'
+@require_POST
+def delete_movie(request):
+    movie_id = request.POST.get('movie_id')
+    if movie_id:
+        movie = get_object_or_404(Movie, id=movie_id, user=request.user)
+        movie.delete()
+        return JsonResponse({'success': True, 'message': 'Film supprimé avec succès.'})
+    return JsonResponse({'success': False, 'message': 'ID de film non fourni.'})
 
-    def get_queryset(self):
-        """
-        Filtre les films pour ne montrer que ceux appartenant à l'utilisateur connecté.
-        """
-        return Movie.objects.filter(user=self.request.user)
-
-    def post(self, request, *args, **kwargs):
-        """
-        Gère la suppression d'un film à partir du formulaire.
-        """
-        movie_id = request.POST.get('movie_id')
-        if movie_id:
-            movie = Movie.objects.filter(id=movie_id, user=self.request.user).first()
-            if movie:
-                movie.delete()
-                messages.success(request, 'Film supprimé avec succès.')
-            else:
-                messages.error(request, 'Film non trouvé ou vous n\'avez pas les droits nécessaires pour le supprimer.')
-        return redirect('delete_movie')
-    
 
 @login_required
 def profile_view(request):

@@ -70,7 +70,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Movie_Collection.wsgi.application'
 
-LOGIN_REDIRECT_URL = 'movies_list'  # Remplacez 'index' par le nom de la vue vers laquelle vous voulez rediriger
+LOGIN_REDIRECT_URL = 'home'  # Remplacez 'index' par le nom de la vue vers laquelle vous voulez rediriger
 
 LOGOUT_REDIRECT_URL = 'index'  # Redirige vers la page d'accueil ou une autre vue après la déconnexion
 
