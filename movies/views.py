@@ -18,8 +18,9 @@ from datetime import datetime
 def index(request):
     return render(request, 'registration/index.html')
 
-def home(request):
-    return render(request, 'movies/dashboard.html')
+def explain(request):
+    return render(request, 'registration/explication.html')
+
 
 
 def signup(request):
@@ -44,6 +45,7 @@ class MovieListView(LoginRequiredMixin, ListView):
     model = Movie
     template_name = 'movies/movies_list.html'
     context_object_name = 'movies'
+    paginate_by = 10
 
     def get_queryset(self):
         queryset = Movie.objects.filter(user=self.request.user)
@@ -54,17 +56,10 @@ class MovieListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(genre=genre_filter)
         
         # Filtrage par date de sortie
-        year_filter = self.request.GET.get('releaseYear')
-        now = timezone.now()
-        
-        if year_filter == 'this_year':
-            start_date = datetime(now.year, 1, 1)
-            end_date = datetime(now.year, 12, 31)
-            queryset = queryset.filter(releaseYear__range=(start_date, end_date))
-        elif year_filter == 'historical':
-            start_date = datetime(1900, 1, 1)
-            end_date = datetime(2023, 12, 31)
-            queryset = queryset.filter(releaseYear__range=(start_date, end_date))
+        year_search = self.request.GET.get('releaseYear')
+       
+        if year_search:
+            queryset = queryset.filter(releaseYear__year=year_search)
         
         # Fonctionnalité de recherche
         search_query = self.request.GET.get('search', '')
@@ -73,11 +68,24 @@ class MovieListView(LoginRequiredMixin, ListView):
                 Q(title__icontains=search_query) | Q(director__icontains=search_query)
             )
         
+        # Fonctionnalité de tri
+        sort_by = self.request.GET.get('sort_by', 'releaseYear') # Par défaut, tri par date de sortie
+        if sort_by == 'title':
+            queryset = queryset.order_by('title')
+        
+        elif sort_by == 'releaseYear':
+            queryset = queryset.order_by('-releaseYear')
+        
+        elif sort_by == 'rating':
+            queryset = queryset.order_by('-rating')
+        
         return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['genres'] = Movie.objects.values_list('genre', flat=True).distinct()
+        context['sort_by'] = self.request.GET.get('sort_by', 'releaseYear') # Par défaut, tri par date de sortie
+        
         return context
 
 
@@ -90,7 +98,10 @@ class MovieCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, f'The movie "{form.instance.title}" has been successfully created. <a href="{reverse_lazy("movie_info", args=[form.instance.pk])}">Look at it</a>')
+        return response
+
     
 
 
@@ -104,6 +115,11 @@ class MovieUpdateView(LoginRequiredMixin, UpdateView):
     def get_queryset(self):
         return Movie.objects.filter(user=self.request.user)
     
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.success(self.request, f'The movie "{form.instance.title}" has been successfully updated. <a href="{reverse_lazy("movie_info", args=[form.instance.pk])}">Look at it</a>')
+        return response
+    
     
 # Vue pour la suppression des films
 @require_POST
@@ -112,8 +128,8 @@ def delete_movie(request):
     if movie_id:
         movie = get_object_or_404(Movie, id=movie_id, user=request.user)
         movie.delete()
-        return JsonResponse({'success': True, 'message': 'Film supprimé avec succès.'})
-    return JsonResponse({'success': False, 'message': 'ID de film non fourni.'})
+        return JsonResponse({'success': True, 'message': 'Movie deleted successfully.'})
+    return JsonResponse({'success': False, 'message': 'ID not found.'})
 
 
 @login_required
@@ -137,3 +153,10 @@ def profile_view(request):
         'profile_form': profile_form,
         'password_form': password_form,
     })
+
+
+@login_required
+def movie_info(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id, user=request.user)
+    
+    return render(request, 'movies/movies_info.html', {'movie': movie})

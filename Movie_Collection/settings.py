@@ -70,7 +70,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Movie_Collection.wsgi.application'
 
-LOGIN_REDIRECT_URL = 'home'  # Remplacez 'index' par le nom de la vue vers laquelle vous voulez rediriger
+LOGIN_REDIRECT_URL = 'movies_list'  # Remplacez 'index' par le nom de la vue vers laquelle vous voulez rediriger
 
 LOGOUT_REDIRECT_URL = 'index'  # Redirige vers la page d'accueil ou une autre vue après la déconnexion
 
@@ -81,7 +81,7 @@ LOGOUT_REDIRECT_URL = 'index'  # Redirige vers la page d'accueil ou une autre vu
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'Movies2',
+        'NAME': 'Movies3',
         'USER': 'postgres',
         'PASSWORD': 'Elisabeth2005',
         'HOST': 'localhost',
@@ -129,6 +129,9 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "movies/static",
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

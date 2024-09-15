@@ -1,206 +1,228 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
     <head>
-        <meta charset="utf-8">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <title>Movies Manager</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
         {% load static %}
 
-        <!-- Google Web Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet"> 
-
-        <!-- Icon Font Stylesheet -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
-
-        <!-- Libraries Stylesheet -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-        <link href="{% static "lib/animate/animate.min.css" %}" rel="stylesheet">
-        <link href="{% static "lib/owlcarousel/assets/owl.carousel.min.css" %}" rel="stylesheet">
-        <link href="{% static "lib/lightbox/css/lightbox.min.css" %}" rel="stylesheet">
-
-
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
-
-        <!-- Template Stylesheet -->
-        <link href="{% static "css/style.css" %}" rel="stylesheet">
+        <!-- Bootstrap -->
+        <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Animate.css -->
+        <link href="{% static 'animate.css/animate.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Font Awesome iconic font -->
+        <link href="{% static 'fontawesome/css/fontawesome-all.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Magnific Popup -->
+        <link href="{% static 'magnific-popup/magnific-popup.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Slick carousel -->
+        <link href="{% static 'slick/slick.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Fonts -->
+        <link href='https://fonts.googleapis.com/css?family=Oswald:300,400,500,700' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Theme styles -->
+        <link href="{% static 'css/dot-icons.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/theme.css' %}" rel="stylesheet" type="text/css">
     </head>
-
-    <body>
-
-        <!-- Spinner Start -->
-        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
-            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
-        </div>
-        <!-- Spinner End -->
-
-        <!-- Navbar & Hero Start -->
-        <div class="container-fluid sticky-top px-0">
-            <div class="position-absolute bg-dark" style="left: 0; top: 0; width: 100%; height: 100%;">
-            </div>
-            <div class="container px-0">
-                <nav class="navbar navbar-expand-lg navbar-dark bg-white py-3 px-4">
-                    <a href="index.html" class="navbar-brand p-0">
-                        <h1 class="text-primary m-0"><i class="fas fa-film me-3"></i>Movies Manager</h1>
-                        <!-- <img src="img/logo.png" alt="Logo"> -->
+    <body class="body">
+        <header class="header header-horizontal header-view-pannel">
+            <div class="container">
+                <nav class="navbar">
+                    <a class="navbar-brand">
+                        <span class="logo-element">
+                            <span class="logo-tape">
+                                <span class="svg-content svg-fill-theme" data-svg="{% static '/images/svg/logo-part.svg' %}"></span>
+                            </span>
+                            <span class="logo-text text-uppercase">
+                                <span></span>Movies Manager</span>
+                        </span>
                     </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                        <span class="fa fa-bars"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarCollapse">
-                        <div class="navbar-nav ms-auto py-0">
-                            <a href="{% url "home" %}" class="nav-item nav-link">Home</a>
-                            <a href="{% url "movies_list" %}" class="nav-item nav-link">Management</a>
-                            <a href="{% url "create_movie" %}" class="nav-item nav-link  active">Creation</a>
+                    <div class="navbar-collapse">
+                        <div class="navbar-extra">
+                            <!-- Bouton pour voir le profil -->
+                            <a class="btn-theme btn" href="{% url 'profile' %}">
+                                <i class="fas fa-user"></i>&nbsp;&nbsp;View Profile
+                            </a>
+                            &nbsp;&nbsp; <!-- Espace entre les deux boutons -->
+                            <!-- Bouton pour se déconnecter -->
+                            <a class="btn-theme btn" href="{% url 'logout' %}">
+                                <i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp;Logout
+                            </a>
                         </div>
-                        <div class="d-flex align-items-center flex-nowrap pt-xl-0">
-                            <a href="{% url "movies_list" %}" class="btn btn-primary rounded-pill text-white py-2 px-4 ms-2 flex-wrap flex-sm-shrink-0">Start Management</a>
-                            <!-- Vérifier si l'utilisateur est authentifié -->
-                            {% if user.is_authenticated %}
-                                <!-- Icône du profil -->
-                                <div class="nav-item dropdown ms-3">
-                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                                        <i class="fas fa-user-circle" style="font-size: 40px;"></i> <!-- Icône utilisateur -->
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-end">
-                                        <a href="{% url 'profile' %}" class="dropdown-item">Profile</a>
-                                        <a href="{% url 'logout' %}" class="dropdown-item">Logout</a>
-                                    </div>
-                                </div>
-                            {% else %}
-                                <!-- Lien vers la page de connexion si l'utilisateur n'est pas authentifié -->
-                                <a href="{% url 'login' %}" class="btn btn-outline-primary rounded-pill py-2 px-4 ms-2">Connexion</a>
-                            {% endif %}
-                        </div>
-                    </div>
+                    </div>                    
                 </nav>
             </div>
-        </div>
-        <!-- Navbar & Hero End -->
-
-        <!-- Header Start -->
-        <div class="container-fluid bg-breadcrumb">
-            <div class="bg-breadcrumb-single"></div>
-            <div class="container text-center py-5" style="max-width: 900px;">
-                <h4 class="text-white display-4 mb-4 wow fadeInDown" data-wow-delay="0.1s">Our Services</h4>
-                <ol class="breadcrumb justify-content-center mb-0 wow fadeInDown" data-wow-delay="0.3s">
-                    <li class="breadcrumb-item"><a href="{% url "home" %}">Home</a></li>
-                    <li class="breadcrumb-item active text-primary">Creation</li>
-                </ol>    
+        </header>
+        <section class="after-head d-flex section-text-white position-relative">
+            <div class="d-background" data-image-src="http://via.placeholder.com/1920x1080" data-parallax="scroll"></div>
+            <div class="d-background bg-black-80"></div>
+            <div class="top-block top-inner container">
+                <div class="top-block-content">
+                    <h1 class="section-title">Movies info</h1>
+                    <div class="page-breadcrumbs">
+                        <a class="content-link" href="{% url 'movies_list' %}">List</a>
+                        <span class="text-theme mx-2"><i class="fas fa-chevron-right"></i></span>
+                        <a class="content-link">Creation</a>
+                    </div>
+                </div>
             </div>
-        </div>
-        <!-- Header End -->
-
-        <!-- List Start -->
-        <div class="container-fluid service py-5">
-            <div class="container py-5">
+        </section>        
+        <!-- Section pour la liste des films -->
+        <section class="section-long">
+            <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-md-8">
-                        <!-- Card for creating a movie -->
                         <div class="card shadow-lg">
-                            <div class="card-header bg-primary text-white">
-                                <h4 class="mb-0">Create Movie</h4>
-                            </div>
                             <div class="card-body">
-                                <form method="post">
+                                <form method="post" enctype="multipart/form-data">
                                     {% csrf_token %}
                                     <div class="form-group">
                                         <label for="{{ form.title.id_for_label }}">Title</label>
                                         {{ form.title }}
                                     </div>
-                                    <br>
                                     <div class="form-group">
                                         <label for="{{ form.director.id_for_label }}">Director</label>
                                         {{ form.director }}
-                                    </div> 
-                                    <br>
+                                    </div>
                                     <div class="form-group">
                                         <label for="{{ form.genre.id_for_label }}">Genre</label>
                                         {{ form.genre }}
                                     </div>
-                                    <br>
                                     <div class="form-group">
                                         <label for="{{ form.releaseYear.id_for_label }}">Release Date</label>
                                         {{ form.releaseYear }}
                                     </div>
+                                    <div class="form-group">
+                                        <label for="{{ form.duration.id_for_label }}">Duration</label>
+                                        {{ form.duration }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{ form.description.id_for_label }}">Synopsis</label>
+                                        {{ form.description }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{ form.production_company.id_for_label }}">Company</label>
+                                        {{ form.production_company }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{ form.country.id_for_label }}">Country</label>
+                                        {{ form.country }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{ form.language.id_for_label }}">Language</label>
+                                        {{ form.language }}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="{{ form.image.id_for_label }}">Image</label>
+                                        {{ form.image }}
+                                    </div>
+                                    
+                                    <!-- Rating System -->
+                                    <div class="form-group">
+                                        <label>Rating:</label>
+                                        <div class="rating-line">
+                                            <div class="form-rating" name="rating">
+                                                <input type="radio" id="rating-10" name="rating" value="10" />
+                                                <label for="rating-10">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-9" name="rating" value="9" />
+                                                <label for="rating-9">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-8" name="rating" value="8" />
+                                                <label for="rating-8">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-7" name="rating" value="7" />
+                                                <label for="rating-7">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-6" name="rating" value="6" />
+                                                <label for="rating-6">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-5" name="rating" value="5" />
+                                                <label for="rating-5">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-4" name="rating" value="4" />
+                                                <label for="rating-4">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-3" name="rating" value="3" />
+                                                <label for="rating-3">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-2" name="rating" value="2" />
+                                                <label for="rating-2">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-1" name="rating" value="1" />
+                                                <label for="rating-1">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+        
                                     <br>
                                     <br>
+        
                                     <div class="form-group">
                                         <button type="submit" class="btn btn-success w-100">Save Movie</button>
                                     </div>
-                                </form>                        
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- List End -->
-
-        <!-- Copyright Start -->
-        <div class="container-fluid copyright py-4">
-            <div class="container">
-                <div class="row g-4 align-items-center">
-                    <div class="col-md-6 text-center text-md-start mb-md-0">
-                        <span class="text-body"><a href="{% url "home" %}" class="border-bottom text-primary"><i class="fas fa-copyright text-light me-2"></i>Movies Manager</a>, All right reserved.</span>
-                    </div>
-                </div>
+        </section>                
+        <a class="scroll-top disabled" href="#"><i class="fas fa-angle-up" aria-hidden="true"></i></a>
+        <footer class="section-text-white footer footer-links bg-darken">
+            <div class="footer-copy">
+                <div class="container">Copyright 2024 &copy; Movies Manager. All rights reserved.</div>
             </div>
-        </div>
-        <!-- Copyright End -->
+        </footer>
+        <!-- jQuery library -->
+        <script src="{% static 'js/jquery-3.3.1.js' %}" defer></script>
 
+        <!-- Bootstrap -->
+        <script src="{% static 'bootstrap/js/bootstrap.js' %}" defer></script>
 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-primary btn-lg-square back-to-top"><i class="fa fa-arrow-up"></i></a>   
+        <!-- Paralax.js -->
+        <script src="{% static 'parallax.js/parallax.js' %}" defer></script>
 
-        
-    <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{% static "lib/wow/wow.min.js" %}"></script>
-    <script src="{% static "lib/easing/easing.min.js" %}"></script>
-    <script src="{% static "lib/waypoints/waypoints.min.js" %}"></script>
-    <script src="{% static "lib/counterup/counterup.min.js" %}"></script>
-    <script src="{% static "lib/owlcarousel/owl.carousel.min.js" %}"></script>
-    <script src="{% static "lib/lightbox/js/lightbox.min.js" %}"></script>
-    <script>
-        // Optional: Add interactivity, for example, form validation
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            form.addEventListener('submit', function(event) {
-                // Example of simple validation
-                let valid = true;
-                document.querySelectorAll('.form-control').forEach(input => {
-                    if (input.value.trim() === '') {
-                        valid = false;
-                        input.classList.add('is-invalid');
-                    } else {
-                        input.classList.remove('is-invalid');
-                    }
-                });
-                if (!valid) {
-                    event.preventDefault();
-                    alert('Please fill out all fields.');
-                }
-            });
-        });
-    </script>
-    
+        <!-- Waypoints -->
+        <script src="{% static 'waypoints/jquery.waypoints.min.js' %}" defer></script>
 
-    <!-- Template Javascript -->
-    <script src="{% static "js/main.js" %}"></script>
+        <!-- Slick carousel -->
+        <script src="{% static 'slick/slick.min.js' %}" defer></script>
+
+        <!-- Magnific Popup -->
+        <script src="{% static 'magnific-popup/jquery.magnific-popup.min.js' %}" defer></script>
+
+        <!-- Inits product scripts -->
+        <script src="{% static 'js/script.js' %}" defer></script>
+
+        <!-- IMDb Rating Plugin -->
+        <script async defer src="https://ia.media-imdb.com/images/G/01/imdb/plugins/rating/js/rating.js"></script>
+
+        <!-- Ajoutez ceci dans le <head> ou juste avant la fin du <body> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+        <!-- Inclure SweetAlert2 depuis un CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </body>
-
 </html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <title>Movies Manager</title>
+
+        {% load static %}
+        <!-- Bootstrap -->
+        <link href="{% static 'bootstrap/css/bootstrap.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Animate.css -->
+        <link href="{% static 'animate.css/animate.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Font Awesome iconic font -->
+        <link href="{% static 'fontawesome/css/fontawesome-all.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Magnific Popup -->
+        <link href="{% static 'magnific-popup/magnific-popup.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Slick carousel -->
+        <link href="{% static 'slick/slick.css' %}" rel="stylesheet" type="text/css" />
+        <!-- Fonts -->
+        <link href='https://fonts.googleapis.com/css?family=Oswald:300,400,500,700' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700' rel='stylesheet' type='text/css'>
+        <!-- Theme styles -->
+        <link href="{% static 'css/dot-icons.css' %}" rel="stylesheet" type="text/css">
+        <link href="{% static 'css/theme.css' %}" rel="stylesheet" type="text/css">
+    </head>
+    <body class="body">
+        <header class="header header-horizontal header-view-pannel">
+            <div class="container">
+                <nav class="navbar">
+                    <a class="navbar-brand" href="./">
+                        <span class="logo-element">
+                            <span class="logo-tape">
+                                <span class="svg-content svg-fill-theme" data-svg="{% static '/images/svg/logo-part.svg' %}"></span>
+                            </span>
+                            <span class="logo-text text-uppercase">
+                                <span></span>Movies Manager</span>
+                        </span>
+                    </a>
+                    <div class="navbar-collapse">
+                        <div class="navbar-extra">
+                            <!-- Bouton pour voir le profil -->
+                            <a class="btn-theme btn" href="{% url 'profile' %}">
+                                <i class="fas fa-user"></i>&nbsp;&nbsp;View Profile
+                            </a>
+                            &nbsp;&nbsp; <!-- Espace entre les deux boutons -->
+                            <!-- Bouton pour se déconnecter -->
+                            <a class="btn-theme btn" href="{% url 'logout' %}">
+                                <i class="fas fa-sign-out-alt"></i>&nbsp;&nbsp;Logout
+                            </a>
+                        </div>
+                    </div> 
+                </nav>
+            </div>
+        </header>
+        <section class="after-head d-flex section-text-white position-relative">
+            <div class="d-background" data-image-src="{% static "movies/wallpaperflare.com_wallpaper (15).jpg" %}" data-parallax="scroll"></div>
+            <div class="d-background bg-black-80"></div>
+            <div class="top-block top-inner container">
+                <div class="top-block-content">
+                    <h1 class="section-title">Movies info</h1>
+                    <div class="page-breadcrumbs">
+                        <a class="content-link" href="{% url 'movies_list' %}">List</a>
+                        <span class="text-theme mx-2"><i class="fas fa-chevron-right"></i></span>
+                        <a class="content-link">{{movie.title}}</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="container">
+            <div class="sidebar-container">
+                <div class="content">
+                    <section class="section-long">
+                        <div class="section-line">
+                            <div class="movie-info-entity">
+                                <div class="entity-poster" data-role="hover-wrap">
+                                    <div class="embed-responsive embed-responsive-poster">
+                                        <img class="embed-responsive-item" src="{% if movie.image %}{{ movie.image.url }}{% else %}http://via.placeholder.com/340x510{% endif %}" alt="{{ movie.title }}" />
+                                    </div>
+                                    <div class="d-over bg-theme-lighted collapse animated faster" data-show-class="fadeIn show" data-hide-class="fadeOut show">
+                                    </div>
+                                </div>
+                                <div class="entity-content">
+                                    <br>
+                                    <br>
+                                    <br>
+                                    <h2 class="entity-title">{{ movie.title }}</h2>
+                                    <div class="entity-category">
+                                        <a class="content-link">{{ movie.genre }}</a>
+                                    </div>
+                                    <div class="entity-info">
+                                        <div class="info-lines">
+                                            <div class="info info-short">
+                                                <span class="text-theme info-icon"><i class="fas fa-star"></i></span>
+                                                {% if movie.rating %}
+                                                    <span class="info-text">{{ movie.rating }}</span>
+                                                    <span class="info-rest">/10</span>
+                                                {% else %}
+                                                    <span class="info-text">N/A</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="info info-short">
+                                                <span class="text-theme info-icon"><i class="fas fa-clock"></i></span>
+                                                <span class="info-text">
+                                                    {% if movie.duration != None %}
+                                                        {{ movie.duration}} min
+                                                    {% else %}
+                                                        N/A
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul class="entity-list">
+                                        <li>
+                                            <span class="entity-list-title">Release:</span>{{ movie.releaseYear }}</li>
+                                        <li>
+                                            <span class="entity-list-title">Directed:</span>
+                                            <a class="content-link" href="#">{{ movie.director }}</a>
+                                        </li>
+                                        <li>
+                                            <span class="entity-list-title">Production company:</span>
+                                            <a class="content-link" href="#">{% if movie.production_company %}{{ movie.production_company }}{% else %}N/A{% endif %}</a>
+                                        </li>
+                                        <li>
+                                            <span class="entity-list-title">Country:</span>
+                                            <a class="content-link" href="#">{% if movie.country %}{{ movie.country }}{% else %}N/A{% endif %}</a>
+                                        </li>
+                                        <li>
+                                            <span class="entity-list-title">Language:</span>{% if movie.language %}{{ movie.language }}{% else %}N/A{% endif %}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="section-line">
+                            <div class="section-head">
+                                <h2 class="section-title text-uppercase">Synopsis</h2>
+                            </div>
+                            <div class="section-description">
+                                <p class="lead">{{ movie.description }}</p>
+                            </div>
+                        </div>
+                        {% comment %} <div class="section-line">
+                            
+                                    <div class="col-12">
+                                        <div class="rating-line">
+                                            <label>Rating:</label>
+                                            <div class="form-rating" name="rating">
+                                                <input type="radio" id="rating-10" name="rating" value="10" />
+                                                <label for="rating-10">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-9" name="rating" value="9" />
+                                                <label for="rating-9">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-8" name="rating" value="8" />
+                                                <label for="rating-8">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-7" name="rating" value="7" />
+                                                <label for="rating-7">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-6" name="rating" value="6" />
+                                                <label for="rating-6">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-5" name="rating" value="5" />
+                                                <label for="rating-5">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-4" name="rating" value="4" />
+                                                <label for="rating-4">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-3" name="rating" value="3" />
+                                                <label for="rating-3">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-2" name="rating" value="2" />
+                                                <label for="rating-2">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                                <input type="radio" id="rating-1" name="rating" value="1" />
+                                                <label for="rating-1">
+                                                    <span class="rating-active-icon"><i class="fas fa-star"></i></span>
+                                                    <span class="rating-icon"><i class="far fa-star"></i></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="px-5 btn btn-theme" type="submit">Send</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div> {% endcomment %}
+                    </section>
+                </div>
+            </div>
+        </div>
+        <a class="scroll-top disabled" href="#"><i class="fas fa-angle-up" aria-hidden="true"></i></a>
+        <footer class="section-text-white footer footer-links bg-darken">
+            <div class="footer-copy">
+                <div class="container">Copyright 2024 &copy; Movies Manager. All rights reserved.</div>
+            </div>
+        </footer>
+        <!-- jQuery library -->
+        <script src="{% static 'js/jquery-3.3.1.js' %}" defer></script>
+
+        <!-- Bootstrap -->
+        <script src="{% static 'bootstrap/js/bootstrap.js' %}" defer></script>
+
+        <!-- Paralax.js -->
+        <script src="{% static 'parallax.js/parallax.js' %}" defer></script>
+
+        <!-- Waypoints -->
+        <script src="{% static 'waypoints/jquery.waypoints.min.js' %}" defer></script>
+
+        <!-- Slick carousel -->
+        <script src="{% static 'slick/slick.min.js' %}" defer></script>
+
+        <!-- Magnific Popup -->
+        <script src="{% static 'magnific-popup/jquery.magnific-popup.min.js' %}" defer></script>
+
+        <!-- Inits product scripts -->
+        <script src="{% static 'js/script.js' %}" defer></script>
+
+        <!-- IMDb Rating Plugin -->
+        <script async defer src="https://ia.media-imdb.com/images/G/01/imdb/plugins/rating/js/rating.js"></script>
+
+        <!-- Ajoutez ceci dans le <head> ou juste avant la fin du <body> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+        <!-- Inclure SweetAlert2 depuis un CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    </body>
+</html>
