@@ -16,6 +16,7 @@
             flex-direction: column;
             min-height: 100vh;
             background-color: #f0f0f0;
+            overflow-y: auto;
         }
 
         .hero {
@@ -248,13 +249,11 @@
             function isElementInViewport(el) {
                 const rect = el.getBoundingClientRect();
                 return (
-                    rect.top >= 0 &&
-                    rect.left >= 0 &&
-                    rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-                    rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+                    rect.top < (window.innerHeight || document.documentElement.clientHeight) &&
+                    rect.bottom > 0
                 );
             }
-
+        
             function handleScroll() {
                 document.querySelectorAll('.card').forEach(card => {
                     if (isElementInViewport(card)) {
@@ -262,10 +261,11 @@
                     }
                 });
             }
-
+        
             window.addEventListener('scroll', handleScroll);
-            handleScroll(); // Initial check
+            handleScroll(); // Initial check on load
         });
+        
     </script>
 </body>
 </html>

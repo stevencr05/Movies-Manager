@@ -16,7 +16,7 @@
             flex-direction: column;
             min-height: 100vh;
             position: relative;
-            overflow: hidden;
+            overflow-y: auto;
         }
 
         .hero {
@@ -32,6 +32,7 @@
             align-items: center;
             flex-grow: 1;
             padding-bottom: 50px; /* Réduit l'espace en bas */
+            min-height: 100vh;
         }
 
         .overlay {
@@ -61,7 +62,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 20px;
             overflow: hidden;
             margin-top: 20px;
